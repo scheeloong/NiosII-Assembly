@@ -1,0 +1,75 @@
+﻿Getting the samples for notes
+step1:
+The following MyMusicApp.java creates a .mid (MIDI) file for a specified instrument, note and length. 
+
+
+package sound;
+import java.io.File;
+import org.jfugue.Pattern;
+import org.jfugue.Player;
+
+
+
+
+public class MyMusicApp {
+        public static void main(String[] args)
+        {        
+                //Initialize the player
+                Player player = new Player();
+
+
+                //Make a Pattern with specified instrument and note
+                Pattern pattern = new Pattern("V0 I[trumpet] Gw");
+
+
+                   try {
+                           //Save to a midi file
+                           File filename = new File("myNoteG-Vtrumpet.mid");
+                           player.saveMidi(pattern, filename);
+                           
+                   } catch (Exception e) {
+                           e.printStackTrace();
+                   }
+                
+                
+                while (true){
+                player.play(pattern);}
+                
+        }
+
+
+}
+step2: the generated file is synthesized into a 16bit, 48kHz, uncompressed .wav file
+
+
+step3: The .wav file is read in matlab into a vector and a period is chosen which is saved into a .txt file, this will have the required samples
+
+
+
+
+
+
+wave = dlmread(‘note.wav’);
+
+
+function[Notenative,p,q] = importAnalyseWave(wave)
+ 
+[Notedouble,NoteSamplingdouble] = wavread(wave);
+[Notenative,Notesamplingnative] = wavread(wave,'native');
+ 
+[p,q]=findpeaks(Notedouble(106001:107000))
+plot(linspace(0,4000,4000), Notedouble(106001:110000,1))
+end
+
+
+
+
+# @param: array = Notenative (native vector of the wav file)
+# a= lower bound, b= upperbound of one period.
+# name = filename of the 
+function[oneWaveC] = createTextSampleFile(array,a, b, name) 
+oneWaveC = array(a:b,1);
+oneWaveCT= oneWaveC';
+size1= size(oneWaveC,1)                                #sample size
+dlmwrite(name,oneWaveCT);                                #save to file
+end
